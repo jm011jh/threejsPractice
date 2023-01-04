@@ -1,7 +1,5 @@
 import * as THREE from 'three'
 import { OrbitControls } from 'OrbitControls';
-import { FontLoader } from 'FontLoader';
-import { TextGeometry } from 'TextGeometry';
 class App {
     constructor(){
         
@@ -35,8 +33,7 @@ class App {
             0.1,
             100
         )
-        // camera.position.x = -15
-        camera.position.z = 50
+        camera.position.z = 25
         this._camera = camera
     }
     _setupLight() {
@@ -50,41 +47,52 @@ class App {
         new OrbitControls(this._camera, this._divContainer)
     }
     _setupModel() {
-        const fontLoader = new FontLoader()
-        async function loadFont(that) {
-            const url = "../../examples/fonts/helvetiker_regular.typeface.json"
-            const font = await new Promise((res, rej) => {
-                fontLoader.load(url, res, undefined, rej)
-            })
-            
-            const geometry = new TextGeometry("welcome",{
-                font: font,
-                size: 10,
-                height: 1,
-                curveSegments: 12,
-                bevelEnabled: false,
-                bevelThickness: 1,
-                bevelSize: 1,
-                bevelOffset: 0,
-                bevelSegments: 1
-            })
+        //태양계-오브젝트 정의 및 추가
+        const solarSystem = new THREE.Object3D()
+        this._scene.add(solarSystem)
 
-            const fillMaterial = new THREE.MeshPhongMaterial({color: 0x515151})
-            const cube = new THREE.Mesh(geometry, fillMaterial)
-    
-            const lineMaterial = new THREE.LineBasicMaterial({color: 0xffff00})
-            const line = new THREE.LineSegments(
-                new THREE.WireframeGeometry(geometry), lineMaterial
-            )
-    
-            const group = new THREE.Group()
-            group.add(cube)
-            group.add(line)
-    
-            that._scene.add(group)
-            that._cube = group
-        }
-        loadFont(this)
+        //구체모양 정의
+        const radius = 1
+        const widthSegments = 120
+        const heightSegments = 120
+        const sphereGeometry = new THREE.SphereGeometry(radius, widthSegments, heightSegments)
+        
+        const sunMaterial = new THREE.MeshPhongMaterial({
+            emissive : 0xffff00, flatShading: true
+        })
+        const sunMesh = new THREE.Mesh(sphereGeometry, sunMaterial)
+            sunMesh.scale.set(3,3,3)
+        solarSystem.position.x = 0
+        solarSystem.add(sunMesh)
+
+        //지구-오브젝트 정의 및 추가
+        const earthOrbit = new THREE.Object3D()
+        solarSystem.add(earthOrbit)
+        
+        const earthMaterial = new THREE.MeshPhongMaterial({
+            color: 0x2233ff, emissive: 0x112244, flatShading: true
+        })
+        const earthMesh = new THREE.Mesh(sphereGeometry, earthMaterial)
+            earthMesh.scale.set(1,1,1)
+        earthOrbit.position.x = 10
+        earthOrbit.add(earthMesh)
+        
+        //달-오브젝트 정의 및 추가
+        const moonOrbit = new THREE.Object3D()
+        earthOrbit.add(moonOrbit)
+        
+        const moonMaterial = new THREE.MeshPhongMaterial({
+            color: 0x888888, emissive: 0x222222, flatShading: true
+        })
+        const moonMesh = new THREE.Mesh(sphereGeometry, moonMaterial)
+            moonMesh.scale.set(0.5, 0.5, 0.5)
+        moonOrbit.position.x = 2
+        moonOrbit.add(moonMesh)
+
+        //마무리
+        this._solarSystem = solarSystem
+        this._earthOrbit = earthOrbit
+        this._moonOrbit = moonOrbit
     }
     resize() {
         const width = this._divContainer.clientWidth
@@ -97,14 +105,15 @@ class App {
     }
 
     render(time) {
+        time *= 0.001
         this._renderer.render(this._scene, this._camera)
         this.update(time)
         requestAnimationFrame(this.render.bind(this))
     }
     update(time) {
-        time *= 0.001
-        // this._cube.rotation.x = time
-        // this._cube.rotation.y = time
+        this._solarSystem.rotation.y = time / 2
+        this._earthOrbit.rotation.y = time * 2
+        this._moonOrbit.rotation.y = time * 5
     }
 }
 
