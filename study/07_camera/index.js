@@ -30,17 +30,32 @@ class App {
         requestAnimationFrame(this.render.bind(this))
     }
     _setupCamera() {
-        const width = this._divContainer.clientWidth
-        const height = this._divContainer.clientHeight
-        const camera = new THREE.PerspectiveCamera(
-            75,
-            width / height,
-            0.1,
-            100
-        )
-        camera.position.set(7,7,0)
-        camera.lookAt(0,0,0)
-        this._camera = camera
+        const cameraVersion = "perspective"
+        // const cameraVersion = "orthographic"
+        if(cameraVersion == "perspective") {
+            const width = this._divContainer.clientWidth
+            const height = this._divContainer.clientHeight
+            const camera = new THREE.PerspectiveCamera(
+                75,
+                width / height,
+                0.1,
+                100
+            )
+            camera.position.set(7,7,0)
+            camera.lookAt(0,0,0)
+            this._camera = camera
+        } else if (cameraVersion == "orthographic") {
+            const aspect = window.innerWidth / window.innerHeight
+            const camera = new THREE.OrthographicCamera(
+                -1*aspect, 1*aspect,
+                1, -1,
+                0.1, 100
+            )
+            camera.zoom = 0.1
+            camera.position.set(7,7,0)
+            camera.lookAt(0,0,0)
+            this._camera = camera
+        }
     }
     _setupLight() {
         // const light_amb = new THREE.AmbientLight(0xffffff, 0.01)
@@ -155,12 +170,25 @@ class App {
         smallSpherePivot.name = "smallSpherePivot"
         smallSphere.position.set(3,0.5,0)
         this._scene.add(smallSpherePivot)
+
+        const targetPivot = new THREE.Object3D()
+        const target = new THREE.Object3D()
+        targetPivot.add(target)
+        targetPivot.name = "targetPivot"
+        target.position.set(3, 0.5, 0)
+        this._scene.add(targetPivot)
     }
     resize() {
         const width = this._divContainer.clientWidth
         const height = this._divContainer.clientHeight
-
-        this._camera.aspect = width / height
+        const aspect = width / height
+        
+        if(this._camera instanceof THREE.PerspectiveCamera) {
+            this._camera.aspect = aspect
+        } else {
+            this._camera.left = -1 * aspect
+            this._camera.right = 1 * aspect
+        }
         this._camera.updateProjectionMatrix()
         
         this._renderer.setSize(width, height)
@@ -172,6 +200,22 @@ class App {
         
         if(smallSpherePivot) {
             smallSpherePivot.rotation.y = THREE.Math.degToRad(time*50)
+
+            //
+            const smallSphere = smallSpherePivot.children[0]
+            smallSphere.getWorldPosition(this._camera.position)
+
+            const targetPivot = this._scene.getObjectByName("targetPivot")
+            if(targetPivot) {
+                targetPivot.rotation.y = THREE.Math.degToRad(time*50 + 10)
+
+                const target = targetPivot.children[0]
+                const pt = new THREE.Vector3()
+
+                target.getWorldPosition(pt)
+                this._camera.lookAt(pt)
+            }
+            //
 
             // if(this._light_direct.target){
             //     const smallSphere = smallSpherePivot.children[0]

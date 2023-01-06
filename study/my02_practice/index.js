@@ -43,11 +43,11 @@ class App {
         this._camera = camera
     }
     _setupLight() {
-        // const light_amb = new THREE.AmbientLight(0xffffff, 5)
+        // const light_amb = new THREE.AmbientLight(0xffffff, 0.01)
         // this._scene.add(light_amb)
         // this._light_amb = light_amb
         
-        // const light_hemi = new THREE.HemisphereLight("#b0d8f5", "#bb7a1c", 1)
+        // const light_hemi = new THREE.HemisphereLight("#b0d8f5", "#bb7a1c", 0.1)
         // this._scene.add(light_hemi)
         // this._light_hemi = light_hemi
 
@@ -62,24 +62,24 @@ class App {
         // this._scene.add(light_direct_helper)
         // this._light_direct_helper = light_direct_helper
 
-        // const light_point = new THREE.PointLight(0xffffff, 2)
-        // light_point.position.set(0,5,0)
-        // light_point.distance = 0
-        // this._scene.add(light_point)
-        // this._light_point = light_point
+        const light_point = new THREE.PointLight(0xffffff, 0.2)
+        light_point.position.set(0,5,0)
+        light_point.distance = 0
+        this._scene.add(light_point)
+        this._light_point = light_point
 
-        // const light_point_helper = new THREE.PointLightHelper(light_point)
-        // this._scene.add(light_point_helper)
-        // this._light_point_helper = light_point_helper
+        const light_point_helper = new THREE.PointLightHelper(light_point)
+        this._scene.add(light_point_helper)
+        this._light_point_helper = light_point_helper
 
-        // const light_spot = new THREE.SpotLight(0xffffff, 1)
-        // light_spot.position.set(0,5,0)
-        // light_spot.target.position.set(0,0,0)
-        // light_spot.angle = THREE.Math.degToRad(50)
-        // light_spot.penumbra = 0.5
-        // this._scene.add(light_spot.target)
-        // this._scene.add(light_spot)
-        // this._light_spot = light_spot
+        const light_spot = new THREE.SpotLight(0xffffff, 0.1)
+        light_spot.position.set(0,5,0)
+        light_spot.target.position.set(0,0,0)
+        light_spot.angle = THREE.Math.degToRad(50)
+        light_spot.penumbra = 0.5
+        this._scene.add(light_spot.target)
+        this._scene.add(light_spot)
+        this._light_spot = light_spot
 
         // const light_spot_helper = new THREE.SpotLightHelper(light_spot)
         // this._scene.add(light_spot_helper)
