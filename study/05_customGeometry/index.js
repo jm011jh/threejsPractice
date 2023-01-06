@@ -1,5 +1,6 @@
 import * as THREE from 'three'
 import { OrbitControls } from 'OrbitControls';
+import { VertexNormalsHelper } from 'VertexNormalsHelper';
 class App {
     constructor(){
         
@@ -104,91 +105,56 @@ class App {
     }
     */
     _setupModel() {
-        const material = new THREE.MeshBasicMaterial({
-            //Material 클래스의 기본속성
-            visible: true,
-            transparent: false,
-            opacity: 1,
-            depthTest: true,
-            depthWrite: true,
-            //
+        const rawPositions = [
+            -1,-1,0,
+            1,-1,0,
+            -1,1,0,
+            1,1,0,
+        ]
+        const rawNormals = [
+            0, 0, 1,
+            0, 0, 1,
+            0, 0, 1,
+            0, 0, 1
+        ]
+        const rawColors = [
+            1,0,0,
+            0,1,0,
+            0,0,1,
+            1,1,0
+        ]
+        const rawUVs = [
+            0, 0,
+            1, 0,
+            0, 1,
+            1, 1
+        ]
+        const positions = new Float32Array(rawPositions)
+        const normals = new Float32Array(rawNormals)
+        const colors = new Float32Array(rawColors)
+        const uvs = new Float32Array(rawUVs)
 
-            color: 0xffffff,
-            wireframe: false
-        })
-        const material2 = new THREE.MeshLambertMaterial({
-            transparent: true,
-            opacity: 0.5,
-            color: 0xff0000,
-            emissive: 0x000000,
-            side: THREE.DoubleSide,//FrontSide,BackSide
-            wireframe: false
-        })
-        const material3 = new THREE.MeshPhongMaterial({
+        const geometry = new THREE.BufferGeometry()
+        geometry.setAttribute("position", new THREE.BufferAttribute(positions, 3))
+        geometry.setAttribute("normal", new THREE.BufferAttribute(normals, 3))
+        geometry.setAttribute("color", new THREE.BufferAttribute(colors, 3))
+        geometry.setAttribute("uv", new THREE.BufferAttribute(uvs, 2))
+        geometry.setIndex([
+            0, 1, 2,
+            2, 1, 3
+        ])
+        const textureLoader = new THREE.TextureLoader()
+        const map = textureLoader.load("../images/glass/Glass_Window_002_ambientOcclusion.jpg")
+        const material = new THREE.MeshPhongMaterial({
             color : 0xffffff,
-            emissive: 0x000000,
-            specular: 0x0000ff,
-            shininess: 5,
-            flatShading: false,
-            wireframe: false
+            vertexColors: true,
+            map: map
         })
-        const material4 = new THREE.MeshStandardMaterial({
-            color: 0xff0000,
-            emissive: 0x100000,
-            roughness: 0.25,
-            metalness: 0.5,
-            wireframe: false,
-            flatShading: false,
-        })
-        const material5 = new THREE.MeshPhysicalMaterial({
-            color: 0xff0000,
-            emissive: 0x000000,
-            roughness: 1,
-            metalness: 0,
-            clearcoat: 1,
-            clearcoatRoughness: 0,
-            wireframe: false,
-            flatShading: false,
-        })
-        const textureLoader6 = new THREE.TextureLoader()
-        const map6 = textureLoader6.load(
-            "../images/glass/Glass_Window_002_ambientOcclusion.jpg",
-            texture => {//텍스쳐 옵션 설정
-                //분할 크기
-                texture.repeat.x = 1
-                texture.repeat.y = 1
-                // 반복 씌우기
-                // texture.wrapS = THREE.RepeatWrapping
-                // texture.wrapT = THREE.RepeatWrapping
-                // 끝픽셀 연장
-                texture.wrapS = THREE.ClampToEdgeWrapping
-                texture.wrapT = THREE.ClampToEdgeWrapping
-                // 반전 연장
-                // texture.wrapS = THREE.MirroredRepeatWrapping
-                // texture.wrapT = THREE.MirroredRepeatWrapping
-                // 텍스쳐 좌표,회전
-                texture.offset.x = 0
-                texture.offset.y = 0
-                texture.rotation = THREE.MathUtils.degToRad(45)
-                texture.center.x = 0.5
-                texture.center.y = 0.5
-
-                //텍스쳐 퀄리티 설정
-                texture.magFilter = THREE.LinearFilter
-                texture.magFilter = THREE.NearestFilter
-                texture.minFilter = THREE.NearestMipMapLinearFilter
-            }
-        )
-        const material6 = new THREE.MeshStandardMaterial({
-            map : map6
-        })
-        const box = new THREE.Mesh(new THREE.BoxGeometry(1,1,1), material6)
-        box.position.set(-1,0,0)
+        const box = new THREE.Mesh(geometry, material)
         this._scene.add(box)
-        
-        const sphere = new THREE.Mesh(new THREE.SphereGeometry(0.7, 32, 32), material6)
-        sphere.position.set(1,0,0)
-        this._scene.add(sphere)
+
+        const helper = new VertexNormalsHelper(box, 0.1, 0xffff00)
+        this._scene.add(helper)
     }
     resize() {
         const width = this._divContainer.clientWidth

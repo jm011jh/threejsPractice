@@ -50,42 +50,94 @@ class App {
         new OrbitControls(this._camera, this._divContainer)
     }
     _setupModel() {
-        const fontLoader = new FontLoader()
-        async function loadFont(that) {
-            const url = "../../examples/fonts/helvetiker_regular.typeface.json"
-            const font = await new Promise((res, rej) => {
-                fontLoader.load(url, res, undefined, rej)
-            })
-            
-            const geometry = new TextGeometry("welcome",{
-                font: font,
-                size: 10,
-                height: 1,
-                curveSegments: 12,
-                bevelEnabled: false,
-                bevelThickness: 1,
-                bevelSize: 1,
-                bevelOffset: 0,
-                bevelSegments: 1
-            })
-
-            const fillMaterial = new THREE.MeshPhongMaterial({color: 0x515151})
-            const cube = new THREE.Mesh(geometry, fillMaterial)
-    
-            const lineMaterial = new THREE.LineBasicMaterial({color: 0xffff00})
-            const line = new THREE.LineSegments(
-                new THREE.WireframeGeometry(geometry), lineMaterial
-            )
-    
-            const group = new THREE.Group()
-            group.add(cube)
-            group.add(line)
-    
-            that._scene.add(group)
-            that._cube = group
+        const vertices = []
+        for(let i = 0; i < 10000; i++) {
+            const x = THREE.Math.randFloatSpread(5)
+            const y = THREE.Math.randFloatSpread(5)
+            const z = THREE.Math.randFloatSpread(5)
+            vertices.push(x,y,z)
         }
-        loadFont(this)
+        
+        const geometry = new THREE.BufferGeometry()
+        geometry.setAttribute(
+            "position",
+            new THREE.Float32BufferAttribute(vertices, 3)
+        )
+        const sprite = new THREE.TextureLoader().load(
+            "./circle.png"
+        )
+        const material = new THREE.PointsMaterial({
+            map: sprite,
+            alphaTest: 0.5,
+            // color: 0xff0000,
+            size: 0.1,
+            sizeAttenuation: true
+        })
+
+        const points = new THREE.Points(geometry, material)
+        this._scene.add(points)
     }
+    // _setupModel() {
+    //     const vertices = [
+    //         -1, 1, 0,
+    //         1, 1, 0,
+    //         -1, -1, 0,
+    //         1, -1, 0,
+    //     ]
+
+    //     const geometry = new THREE.BufferGeometry()
+    //     geometry.setAttribute("position",
+    //         new THREE.Float32BufferAttribute(vertices, 3)
+    //     )
+
+    //     const material = new THREE.LineDashedMaterial({
+    //         color: 0xffff00,
+    //         dashSize: 0.2,
+    //         gapSize: 0.1,
+    //         scale: 1,
+    //     })
+
+    //     const line = new THREE.LineLoop(geometry,material)
+    //     line.computeLineDistances()//dash선에 적용
+    //     this._scene.add(line)
+    // }
+    // _setupModel() {
+    //     const fontLoader = new FontLoader()
+    //     async function loadFont(that) {
+    //         const url = "../../examples/fonts/helvetiker_regular.typeface.json"
+    //         const font = await new Promise((res, rej) => {
+    //             fontLoader.load(url, res, undefined, rej)
+    //         })
+            
+    //         const geometry = new TextGeometry("welcome",{
+    //             font: font,
+    //             size: 10,
+    //             height: 1,
+    //             curveSegments: 12,
+    //             bevelEnabled: false,
+    //             bevelThickness: 1,
+    //             bevelSize: 1,
+    //             bevelOffset: 0,
+    //             bevelSegments: 1
+    //         })
+
+    //         const fillMaterial = new THREE.MeshPhongMaterial({color: 0x515151})
+    //         const cube = new THREE.Mesh(geometry, fillMaterial)
+    
+    //         const lineMaterial = new THREE.LineBasicMaterial({color: 0xffff00})
+    //         const line = new THREE.LineSegments(
+    //             new THREE.WireframeGeometry(geometry), lineMaterial
+    //         )
+    
+    //         const group = new THREE.Group()
+    //         group.add(cube)
+    //         group.add(line)
+    
+    //         that._scene.add(group)
+    //         that._cube = group
+    //     }
+    //     loadFont(this)
+    // }
     resize() {
         const width = this._divContainer.clientWidth
         const height = this._divContainer.clientHeight
