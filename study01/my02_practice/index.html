@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>test00</title>
+    <link rel="stylesheet" href="index.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.10.4/gsap.min.js"></script>
+    <script type="importmap">
+        {
+            "imports": {
+                "gsap" : "https://cdnjs.cloudflare.com/ajax/libs/gsap/3.10.4/gsap.min.js",
+                "three": "https://unpkg.com/three@0.138.0/build/three.module.js",
+                "OrbitControls": "https://unpkg.com/three@0.138.0/examples/jsm/controls/OrbitControls.js",
+                "FontLoader": "https://unpkg.com/three@0.138.0/examples/jsm/loaders/FontLoader.js",
+                "TextGeometry": "https://unpkg.com/three@0.138.0/examples/jsm/geometries/TextGeometry.js",
+                "RectAreaLightUniformsLib": "https://unpkg.com/three@0.138.0/examples/jsm/lights/RectAreaLightUniformsLib.js",
+                "RectAreaLightHelper": "https://unpkg.com/three@0.138.0/examples/jsm/helpers/RectAreaLightHelper.js"
+            }
+        }
+    </script>
+    <script type="module" src="index.js"></script>
+</head>
+<body>
+    <section class="container">
+        <article class="tile">
+            <figure class="tile__figure">
+                <img src="image.jpg" data-hover="hover.jpg" class="tile__image" alt="My image" width="400" height="300" />
+            </figure>
+        </article>
+        <article class="tile">
+            <figure class="tile__figure">
+                <img src="image.jpg" data-hover="hover.jpg" class="tile__image" alt="My image" width="400" height="300" />
+            </figure>
+        </article>
+        <article class="tile">
+            <figure class="tile__figure">
+                <img src="image.jpg" data-hover="hover.jpg" class="tile__image" alt="My image" width="400" height="300" />
+            </figure>
+        </article>
+    </section>
+    <canvas id="stage"></canvas>
+<!-- 
+
+    https://tympanus.net/codrops/2019/10/23/making-gooey-image-hover-effects-with-three-js/
+ -->
+</body>
+</html>
