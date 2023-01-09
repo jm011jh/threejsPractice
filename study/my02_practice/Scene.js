@@ -19,9 +19,9 @@ export default class Scene {
         this.initLights()
         this.initCamera()
 
-        this.figure = new Figure(this.scene)
-
-        this.update()
+        this.figure = new Figure(this.scene, () => {
+            this.update()
+        })
     }
 
     initLights() {
@@ -44,8 +44,10 @@ export default class Scene {
     }
 
     update() {
-        if (this.renderer === undefined || this.scene === undefined || this.camera === undefined) return
+        if (this.renderer === undefined) return
         requestAnimationFrame(this.update.bind(this))
+
+        this.figure.update()
 
         this.renderer.render(this.scene, this.camera)
     }
