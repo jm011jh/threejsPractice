@@ -87,6 +87,8 @@ class App {
             (gltf) => {
                 const root = gltf.scene
                 this._scene.add(root)
+
+                this._zoomFit(root, this._camera)
             }
         )
         
